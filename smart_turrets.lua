@@ -293,22 +293,8 @@ function widget:GameFrame(n)
                 end
 
                 if not already and not reclaiming and not resurrecting then
-                    -- Pick the target closest to completion (highest build progress)
-                    local bestTarget = inRangeTargets[1]
-                    local _, _, _, _, bestBuild = Spring.GetUnitHealth(bestTarget.id)
-                    
-                    for i = 2, #inRangeTargets do
-                        local _, _, _, _, currentBuild = Spring.GetUnitHealth(inRangeTargets[i].id)
-                        if currentBuild > bestBuild then
-                            bestTarget = inRangeTargets[i]
-                            bestBuild = currentBuild
-                        end
-                    end
-                    
-                    -- If multiple targets have same progress (e.g. 0%), fallback to distance
-                    -- This is implicitly handled because we just keep the first one found if progress is equal, 
-                    -- but we could add a secondary check if needed. For now, progress is king.
-                    Spring.GiveOrderToUnit(unitID, CMD.REPAIR, {bestTarget.id}, {})
+                    -- Pick any in-range target (priorities are handled by the target list order)
+                    Spring.GiveOrderToUnit(unitID, CMD.REPAIR, {inRangeTargets[1].id}, {})
                 end
             end
         end
