@@ -4,8 +4,8 @@ function widget:GetInfo()
 	return {
 		name = "Lava Timings",
 		desc = "Displays the countdown for the next Lava Tide movement",
-		author = "[Crd]RedbuLL - Creed of Champion",
-		date = "2025-11-13",
+		author = "RedbuLL86 - Discord",
+		date = "2025-11-24",
 		license = "GNU GPL, v2 or later",
 		layer = 0,
 		enabled = true,
