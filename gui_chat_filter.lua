@@ -783,7 +783,6 @@ end
 --------------------------------------------------------------------------------
 local ChatFilter = {}
 ChatFilter.blacklistFile = "chat_filter_blacklist.lua"
-ChatFilter.blacklistExpandedFile = "chat_filter_blacklist_expanded.lua"
 ChatFilter.whitelistFile = "chat_filter_whitelist.lua"
 ChatFilter.blacklistPatterns = {}
 ChatFilter.whitelistPatterns = {}
@@ -844,16 +843,9 @@ ChatFilter.LoadList = function(filename)
 end
 
 ChatFilter.LoadWordlist = function()
-    -- Try to load expanded blacklist first
-    local black = ChatFilter.LoadList(ChatFilter.blacklistExpandedFile)
-    if #black > 0 then
-        ChatFilter.blacklistPatterns = black
-        Spring.Echo("Chat Filter: Loaded EXPANDED blacklist ("..#black.." entries).")
-    else
-        -- Fallback to standard blacklist
-        ChatFilter.blacklistPatterns = ChatFilter.LoadList(ChatFilter.blacklistFile)
-        Spring.Echo("Chat Filter: Loaded standard blacklist ("..#ChatFilter.blacklistPatterns.." entries).")
-    end
+    -- Reload lists
+    ChatFilter.blacklistPatterns = ChatFilter.LoadList(ChatFilter.blacklistFile)
+    Spring.Echo("Chat Filter: Final Blacklist Count: " .. #ChatFilter.blacklistPatterns)
 
     ChatFilter.whitelistPatterns = ChatFilter.LoadList(ChatFilter.whitelistFile)
     Spring.Echo("Chat Filter: Final Whitelist Count: " .. #ChatFilter.whitelistPatterns)
