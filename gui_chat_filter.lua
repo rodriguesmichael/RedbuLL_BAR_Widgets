@@ -4,8 +4,8 @@ function widget:GetInfo()
 	return {
 		name      = "Chat Filtered",
 		desc      = "chat/console (do /clearconsole to wipe history)",
-		author    = "Discord - RedbuLL86",
-		date      = "Dec 2025",
+		author    = "Discord - RedbuLL86 (Floris - original)",
+		date      = "May 2021 (original) and Dec 2025 (enhancements)",
 		license   = "GNU GPL, v2 or later",
 		layer     = -10000000, -- Force high priority just in case, though unrelated now as checking standalone
 		enabled   = true,
