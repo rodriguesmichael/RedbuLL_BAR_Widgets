@@ -1,6 +1,5 @@
 return {
-	-- "ass" falsos positivos comuns (sem incluir "ass")
-    "bass",
+	-- ===== ass =====
 	"class",
 	"classes",
 	"classic",
@@ -27,7 +26,6 @@ return {
 	"embarrassed",
 	"embarrassing",
 	"embarrassment",
-	"embarrassments",
 	"assist",
 	"assists",
 	"assisted",
@@ -35,94 +33,72 @@ return {
 	"assistant",
 	"assistants",
 	"assistance",
-	"assistive",
 	"associate",
-	"associates",
 	"associated",
-	"associating",
 	"association",
 	"associations",
 	"assign",
 	"assigned",
-	"assigning",
 	"assignment",
-	"assignments",
 	"assume",
 	"assumed",
-	"assumes",
-	"assuming",
 	"assumption",
-	"assumptions",
 	"grass",
-	"grasses",
 	"glass",
 	"glasses",
 	"mass",
-	"masses",
 	"massive",
-	"massively",
 
-	-- "anal" falsos positivos técnicos (sem incluir "anal")
+	-- ===== anal =====
 	"analysis",
 	"analyses",
 	"analyze",
 	"analyzed",
 	"analyzing",
 	"analyst",
-	"analysts",
 	"analytics",
 	"analytical",
 	"analog",
-	"analogs",
 	"analogue",
-	"analogues",
-	"analogy",
 	"analogies",
+	"analogy",
 
-	-- "cum" falsos positivos comuns (sem incluir "cum")
+	-- ===== cum =====
 	"document",
 	"documents",
-	"documented",
-	"documenting",
 	"documentation",
 	"accumulate",
 	"accumulated",
-	"accumulates",
 	"accumulating",
 	"accumulation",
-	"accumulations",
 	"cumulative",
-	"cumulatively",
 	"circumstance",
 	"circumstances",
-	"circumstantial",
 	"circumvent",
-	"circumvented",
-	"circumventing",
 	"circumvention",
 	"circumference",
-	"circumferences",
 	"circumnavigate",
-	"circumnavigation",
 
-	-- "sex" falsos positivos (sem incluir "sex")
+	-- ===== sex =====
 	"sussex",
-	"unisex",
 	"middlesex",
 	"essex",
+	"unisex",
+	"asexual",
+	"asexuality",
+	"sexton",
+	"sextant",
 
-	-- "rape" falsos positivos (sem incluir "rape")
+	-- ===== rape =====
 	"grape",
 	"grapes",
 	"grapefruit",
 	"scrape",
-	"scrapes",
 	"scraped",
 	"scraping",
 	"rapeseed",
-	"rapeseeds",
 
-	-- "cock" falsos positivos (sem incluir "cock")
+	-- ===== cock =====
 	"cockpit",
 	"cockpits",
 	"cocktail",
@@ -132,7 +108,7 @@ return {
 	"peacock",
 	"peacocks",
 
-	-- "tit" falsos positivos (sem incluir "tit")
+	-- ===== tit =====
 	"titan",
 	"titans",
 	"titanic",
@@ -142,10 +118,98 @@ return {
 	"gratitude",
 	"multitude",
 
-	-- "shit" falsos positivos (sem incluir "shit")
+	-- ===== shit =====
 	"shiitake",
 	"shiitakes",
 
-	-- casos clássicos de "substring" em topônimos/palavras conhecidas
-	"scunthorpe"
+	-- ===== dick =====
+	"dictionary",
+	"dictionaries",
+	"predict",
+	"prediction",
+	"predictable",
+	"predictive",
+	"addiction",
+	"addictive",
+	"indicator",
+	"indication",
+
+	-- ===== porn =====
+	"porosity",
+	"porous",
+	"porphyry",
+	"porphyria",
+
+	-- ===== cunt =====
+	"scunthorpe",
+
+	-- ===== pau =====
+	"pause",
+	"paused",
+	"pauses",
+	"pausing",
+	"unpause",
+	"unpaused",
+	"unpausing",
+
+	-- ===== piss =====
+	"pistol",
+	"pistols",
+	"piston",
+	"pistons",
+	"piste",
+	"pistes",
+	"epistle",
+	"epistles",
+
+	-- ===== con =====
+	"control",
+	"controls",
+	"controller",
+	"controllers",
+	"connection",
+	"connections",
+	"configure",
+	"configuration",
+	"configurations",
+	"console",
+	"consequence",
+	"consequences",
+	"constant",
+	"constants",
+
+	-- ===== cu =====
+	"culture",
+	"cultural",
+	"curious",
+	"curiosity",
+	"current",
+	"currently",
+	"currency",
+	"curved",
+	"cursor",
+	"custom",
+	"customer",
+
+	-- ===== titty / nipple =====
+	"entity",
+	"entities",
+	"quantity",
+	"utilities",
+	"utility",
+
+	-- ===== misc chat / game safe =====
+	"asset",
+	"assets",
+	"baseline",
+	"basically",
+	"assistantship",
+	"assessment",
+	"assessments",
+	"assignment",
+	"assignments",
+	"mission",
+	"missions",
+	"permission",
+	"permissions"
 }

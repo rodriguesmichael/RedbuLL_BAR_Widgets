@@ -46,7 +46,7 @@ local showHistoryWhenCtrlShift = true
 local enableShortcutClick = true -- enable ctrl+click to goto mapmark coords... while not being in history mode
 
 local vsx, vsy = gl.GetViewSizes()
-local posY = 0.45 -- Moved lower (Original 0.81, prev 0.6)
+local posY = 0.81
 local posX = 0.3
 local posX2 = 0.74
 local charSize = 21 - (3.5 * ((vsx/vsy) - 1.78))
