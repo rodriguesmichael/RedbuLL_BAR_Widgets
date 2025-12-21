@@ -782,9 +782,14 @@ end
 -- Chat Filter Logic
 --------------------------------------------------------------------------------
 local ChatFilter = {}
-ChatFilter.wordlistFile = "chat_filter_wordlist_data.lua"
-ChatFilter.wordlistPatterns = {}
+ChatFilter.blacklistFile = "chat_filter_blacklist.lua"
+ChatFilter.whitelistFile = "chat_filter_whitelist.lua"
+ChatFilter.blacklistPatterns = {}
+ChatFilter.whitelistPatterns = {}
 ChatFilter.string_rep = string.rep
+ChatFilter.string_gsub = string.gsub
+ChatFilter.string_find = string.find
+ChatFilter.table_insert = table.insert
 
 ChatFilter.CreateCaseInsensitivePattern = function(word)
 	local pattern = ""
@@ -801,47 +806,93 @@ ChatFilter.CreateCaseInsensitivePattern = function(word)
 	return pattern
 end
 
-ChatFilter.LoadWordlist = function()
-	if VFS.FileExists(ChatFilter.wordlistFile) then
-		local chunk, err = loadfile(ChatFilter.wordlistFile)
-		if chunk then
-			local success, list = pcall(chunk)
-			if success and type(list) == "table" then
-				ChatFilter.wordlistPatterns = {}
-				for _, word in ipairs(list) do
-					table.insert(ChatFilter.wordlistPatterns, {
-						original = word,
-						pattern = ChatFilter.CreateCaseInsensitivePattern(word),
-						replacement = ChatFilter.string_rep("*", #word)
-					})
-				end
-			end
-		end
+ChatFilter.LoadList = function(filename)
+    local patterns = {}
+    -- Try to include via VFS
+    local fullPath = "LuaUI/Widgets/" .. filename
+	if VFS.FileExists(fullPath) then
+        local list = VFS.Include(fullPath)
+        Spring.Echo("Chat Filter: Loading " .. fullPath)
+        if list and type(list) == "table" then
+            Spring.Echo("Chat Filter: Found " .. #list .. " words.")
+            for _, word in ipairs(list) do
+                ChatFilter.table_insert(patterns, {
+                    pattern = ChatFilter.CreateCaseInsensitivePattern(word),
+                    replacement = ChatFilter.string_rep("*", #word)
+                })
+            end
+        else
+            Spring.Echo("Chat Filter: Failed to load table from " .. fullPath)
+        end
 	else
-        -- Fallback hardcode
-         local fallback = { "badword", "slur", "insult", "troll", "spam" }
-         for _, word in ipairs(fallback) do
-             table.insert(ChatFilter.wordlistPatterns, {
-						original = word,
-						pattern = ChatFilter.CreateCaseInsensitivePattern(word),
-						replacement = ChatFilter.string_rep("*", #word)
-			})
-         end
+        Spring.Echo("Chat Filter: File not found: " .. fullPath)
+        -- Fallback to local include if VFS fail
+        if VFS.FileExists(filename) then
+             local list = VFS.Include(filename)
+             if list and type(list) == "table" then
+                for _, word in ipairs(list) do
+                    ChatFilter.table_insert(patterns, {
+                        pattern = ChatFilter.CreateCaseInsensitivePattern(word),
+                        replacement = ChatFilter.string_rep("*", #word)
+                    })
+                end
+             end
+        end
     end
+    return patterns
+end
+
+ChatFilter.LoadWordlist = function()
+    -- Reload lists
+    ChatFilter.blacklistPatterns = ChatFilter.LoadList(ChatFilter.blacklistFile)
+    ChatFilter.whitelistPatterns = ChatFilter.LoadList(ChatFilter.whitelistFile)
+    
+    Spring.Echo("Chat Filter: Final Blacklist Count: " .. #ChatFilter.blacklistPatterns)
+    Spring.Echo("Chat Filter: Final Whitelist Count: " .. #ChatFilter.whitelistPatterns)
 end
 
 ChatFilter.FilterText = function(text)
     if not text then return text end
+    
+    -- Optim: If no blacklist, skip everything
+    if #ChatFilter.blacklistPatterns == 0 then return text end
+
     local cleanText = text
-    for _, entry in ipairs(ChatFilter.wordlistPatterns) do
-        -- Just strict filtering: replace matching patterns
-        if string.find(cleanText, entry.pattern) then
-            cleanText = string.gsub(cleanText, entry.pattern, entry.replacement)
+    local placeholders = {}
+    local pCount = 0
+
+    -- 1. Whitelist Masking
+    -- We replace safewords with a unique token that won't trigger blacklist
+    if #ChatFilter.whitelistPatterns > 0 then
+        for _, entry in ipairs(ChatFilter.whitelistPatterns) do
+             if ChatFilter.string_find(cleanText, entry.pattern) then
+                cleanText = ChatFilter.string_gsub(cleanText, entry.pattern, function(match)
+                    pCount = pCount + 1
+                    local token = "\0"..pCount.."\0" -- Null byte token, unlikely to be in chat
+                    placeholders[token] = match
+                    return token
+                end)
+             end
         end
     end
+
+    -- 2. Blacklist Filtering
+    -- Replace bad words with ****
+    for _, entry in ipairs(ChatFilter.blacklistPatterns) do
+        if ChatFilter.string_find(cleanText, entry.pattern) then
+            cleanText = ChatFilter.string_gsub(cleanText, entry.pattern, entry.replacement)
+        end
+    end
+
+    -- 3. Restore Whitelist matches
+    if pCount > 0 then
+        cleanText = ChatFilter.string_gsub(cleanText, "%z%d+%z", function(token)
+            return placeholders[token] or token
+        end)
+    end
+
     return cleanText
 end
-
 
 
 local function processAddConsoleLine(gameFrame, line, orgLineID, reprocessID)
