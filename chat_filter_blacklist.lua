@@ -1436,7 +1436,6 @@ return {
 	"žrát",
 
 	-- Turkish
-	"am",
 	"amcığa",
 	"amcığı",
 	"amcığın",
