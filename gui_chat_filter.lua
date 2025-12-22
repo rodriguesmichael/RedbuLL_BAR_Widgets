@@ -848,6 +848,37 @@ ChatFilter.LoadWordlist = function()
     Spring.Echo("Chat Filter: Final Blacklist Count: " .. #ChatFilter.blacklistPatterns)
 
     ChatFilter.whitelistPatterns = ChatFilter.LoadList(ChatFilter.whitelistFile)
+    
+    -- [SMART WHITELIST] Add Unit & Weapon names that collide with blacklist
+    if UnitDefs then
+        local addedCount = 0
+        for _, uDef in pairs(UnitDefs) do
+            if uDef.humanName then
+                local name = uDef.humanName
+                local needsWhitelist = false
+                
+                -- Check if this unit name triggers the filter
+                for _, entry in ipairs(ChatFilter.blacklistPatterns) do
+                    if ChatFilter.string_find(name, entry.pattern) then
+                        needsWhitelist = true
+                        break
+                    end
+                end
+
+                if needsWhitelist then
+                    ChatFilter.table_insert(ChatFilter.whitelistPatterns, {
+                        pattern = ChatFilter.CreateCaseInsensitivePattern(name),
+                        replacement = "" -- Not used for whitelist
+                    })
+                    addedCount = addedCount + 1
+                end
+            end
+        end
+        Spring.Echo("Chat Filter: Smart Whitelisted " .. addedCount .. " Unit/Structure names.")
+    else
+        Spring.Echo("Chat Filter: UnitDefs not available (yet?), skipped unit whitelisting.")
+    end
+
     Spring.Echo("Chat Filter: Final Whitelist Count: " .. #ChatFilter.whitelistPatterns)
 end
 
@@ -896,8 +927,9 @@ end
 
 
 local function processAddConsoleLine(gameFrame, line, orgLineID, reprocessID)
-    -- Apply filter
-    line = ChatFilter.FilterText(line)
+    -- Apply filter -> REMOVED global filter to protect names/system msgs
+    -- line = ChatFilter.FilterText(line) 
+
 	local orgLine = line
 	local name = ''
 	local nameText = ''
@@ -931,6 +963,9 @@ local function processAddConsoleLine(gameFrame, line, orgLineID, reprocessID)
 		if ssub(text,1,1) == ' ' then
 			text = ssub(text,2)
 		end
+        
+        -- [FILTER] Apply to player text
+        text = ChatFilter.FilterText(text)
 
 		nameText = getPlayerColorString(name, gameFrame)..(playernames[name] and playernames[name][7] or name)
 		line = ColorString(c[1],c[2],c[3])..text
@@ -966,6 +1001,9 @@ local function processAddConsoleLine(gameFrame, line, orgLineID, reprocessID)
 			text = ssub(text,2)
 		end
 
+        -- [FILTER] Apply to spectator text
+        text = ChatFilter.FilterText(text)
+
 		nameText = ColorString(colorSpec[1],colorSpec[2],colorSpec[3])..'(s) '..(playernames[name] and playernames[name][7] or name)
 		line = ColorString(c[1],c[2],c[3])..text
 
@@ -998,6 +1036,9 @@ local function processAddConsoleLine(gameFrame, line, orgLineID, reprocessID)
 			end
 		end
 
+        -- [FILTER] Apply to map marker text
+        text = ChatFilter.FilterText(text)
+
 		nameText = namecolor..(spectator and '(s) ' or '')..(playernames[name] and playernames[name][7] or name)
 		line = textcolor..text
 
@@ -1029,6 +1070,9 @@ local function processAddConsoleLine(gameFrame, line, orgLineID, reprocessID)
 		if ssub(text,1,1) == ' ' then
 			text = ssub(text,2)
 		end
+
+        -- [FILTER] Apply to battleroom text
+        text = ChatFilter.FilterText(text)
 
 		nameText = ColorString(colorGame[1],colorGame[2],colorGame[3])..'<'..(playernames[name] and playernames[name][7] or name)..'>'
 		line = ColorString(colorGame[1],colorGame[2],colorGame[3])..text
