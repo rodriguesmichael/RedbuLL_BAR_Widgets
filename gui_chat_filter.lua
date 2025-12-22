@@ -852,9 +852,11 @@ ChatFilter.LoadWordlist = function()
     -- [SMART WHITELIST] Add Unit & Weapon names that collide with blacklist
     if UnitDefs then
         local addedCount = 0
-        for _, uDef in pairs(UnitDefs) do
-            if uDef.humanName then
-                local name = uDef.humanName
+        for id, uDef in pairs(UnitDefs) do
+            -- Use translatedHumanName as primary, fallback to others
+            local name = uDef.translatedHumanName or uDef.humanName or uDef.name or ""
+            
+            if name ~= "" then
                 local needsWhitelist = false
                 
                 -- Check if this unit name triggers the filter
